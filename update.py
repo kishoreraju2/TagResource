@@ -44,12 +44,11 @@ def extract_tags(tags):
     t = dict()    
     for k, v in tags.items():
         temp = k.split(".")
+        validate_tag_namespace(namespaces, temp[0], temp[1])
         try:
             t[temp[0]] = {**t[temp[0]], temp[1]: v}
-            validate_tag_namespace(namespaces, temp[0], temp[1])
         except KeyError:
             t[temp[0]] = {temp[1]: v}
-            validate_tag_namespace(namespaces, temp[0], temp[1])
 
     return t
 
