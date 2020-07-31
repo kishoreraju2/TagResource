@@ -17,7 +17,7 @@ def extract_tags(tags):
             t[temp[0]] = {temp[1]: v}
     return t
 
-
+COUNT=0
 def update_tag(**kwargs):
     try:
         resource_list = resources.get_resource(kwargs["resource_type"])
@@ -28,6 +28,11 @@ def update_tag(**kwargs):
             "client." + resource_list[2] + "(kwargs['resource_id'], update_details)"
         )
         print(res.status)
-    except Exception as e:
-        print(e)
+    except oci.exceptions.ServiceError as e:
+        if(e.code == "RelatedResourceNotAuthorizedOrNotFound"):
+            print(e.message)
+            raise Exception
+        else:
+            print(e.message)
+
 
