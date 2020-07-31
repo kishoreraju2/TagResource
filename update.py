@@ -4,20 +4,59 @@ from oci.config import from_file
 import resources
 
 config = from_file()
+IDENTITY_CLIENT = oci.identity.IdentityClient(config)
+TAG = dict()
+
+def list_namespace():
+    tenancy_id = config["tenancy"]
+    return oci.pagination.list_call_get_all_results(
+        IDENTITY_CLIENT.list_tag_namespaces, tenancy_id, include_subcompartments=True
+    ).data
+
+def list_tag(namespace):
+    res = IDENTITY_CLIENT.list_tags(namespace.id).data
+    tag_list = list()
+    for i in res:
+        tag_list.append(i.name)
+    TAG[namespace.name] = tag_list
+
+
+
+def validate_tag_namespace(namespace, tag_namespace, tag_key):
+
+    if(tag_namespace not in list(TAG.keys())):
+        print(tag_namespace + " not there in namespace")
+        raise Exception
+        # tag_ids.append(get_id_from_namespace(namespace, tag_namespace))
+    if tag_key not in TAG[tag_namespace]:
+        print(tag_key + " not in tag key")
+        raise Exception
+    
+
+namespaces = list_namespace()
+for i in namespaces:
+    list_tag(i)
+        
 
 
 # Function to convert namespace.key = value to {"namespace1": {"key1":"value1","Key2":"value2"}}
 def extract_tags(tags):
-    t = dict()
+    t = dict()    
     for k, v in tags.items():
         temp = k.split(".")
         try:
             t[temp[0]] = {**t[temp[0]], temp[1]: v}
+            validate_tag_namespace(namespaces, temp[0], temp[1])
         except KeyError:
             t[temp[0]] = {temp[1]: v}
+            validate_tag_namespace(namespaces, temp[0], temp[1])
+
     return t
 
-COUNT=0
+
+COUNT = 0
+
+
 def update_tag(**kwargs):
     try:
         resource_list = resources.get_resource(kwargs["resource_type"])
@@ -29,10 +68,11 @@ def update_tag(**kwargs):
         )
         print(res.status)
     except oci.exceptions.ServiceError as e:
-        if(e.code == "RelatedResourceNotAuthorizedOrNotFound"):
+        if e.code == "RelatedResourceNotAuthorizedOrNotFound":
             print(e.message)
             raise Exception
         else:
             print(e.message)
 
 
+# validate_tag_namespace(tags)
