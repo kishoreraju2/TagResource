@@ -7,6 +7,15 @@ config = from_file()
 IDENTITY_CLIENT = oci.identity.IdentityClient(config)
 TAG = dict()
 
+
+
+logging.basicConfig(filename="output.log", 
+                    format='%(asctime)s %(levelname)s %(message)s ', 
+                    filemode='w') 
+
+logger = logging.getLogger()
+
+logger.setLevel(logging.INFO) 
 def list_namespace():
     tenancy_id = config["tenancy"]
     return oci.pagination.list_call_get_all_results(
@@ -26,10 +35,12 @@ def validate_tag_namespace(namespace, tag_namespace, tag_key):
 
     if(tag_namespace not in list(TAG.keys())):
         print(tag_namespace + " not there in namespace")
+        logger.error(tag_namespace + " not there in namespace")
         raise Exception
         # tag_ids.append(get_id_from_namespace(namespace, tag_namespace))
     if tag_key not in TAG[tag_namespace]:
         print(tag_key + " not in tag key")
+        logger.error(tag_key + " not in tag key")
         raise Exception
     
 
@@ -47,7 +58,7 @@ def extract_tags(tags):
         validate_tag_namespace(namespaces, temp[0], temp[1])
         try:
             t[temp[0]] = {**t[temp[0]], temp[1]: v}
-        except KeyError:
+        except KeyError as e:
             t[temp[0]] = {temp[1]: v}
 
     return t
@@ -65,13 +76,12 @@ def update_tag(**kwargs):
         res = eval(
             "client." + resource_list[2] + "(kwargs['resource_id'], update_details)"
         )
-        print(res.status)
+        logger.info("Successfully updated "+ kwargs['resource_id'])
+        print(res.status, kwargs['resource_id'])
     except oci.exceptions.ServiceError as e:
-        if e.code == "RelatedResourceNotAuthorizedOrNotFound":
-            print(e.message)
-            raise Exception
-        else:
-            print(e.message)
+        print(e.message)
+        logger.error("updating "+ kwargs['resource_id'])
+        logger.error(e.message)
 
 
 # validate_tag_namespace(tags)

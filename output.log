@@ -1,0 +1,8 @@
+2020-08-04 19:31:19,710 INFO Updating resource db_system 
+2020-08-04 19:31:21,085 ERROR updating ocid1.instance.oc1.iad.anuwcljt6d6vpzycynfhlqgnc2u55awocg2v72ioea2yvg65th52lnx7ijgq 
+2020-08-04 19:31:21,086 ERROR Authorization failed or requested resource not found. 
+2020-08-04 19:31:22,345 ERROR updating ocid1.instance.oc1.iad.anuwcljr6d6vpzyc75ojqqors74niem2rbib4xl23a7nwnogclmurpg3qo4q 
+2020-08-04 19:31:22,345 ERROR Authorization failed or requested resource not found. 
+2020-08-04 19:31:23,523 ERROR updating ocid1.volume.oc1.iad.abuwcljrxyfsgserspxog2ba3qxuvb6gk6ljcddv3equpp22qbodfkzdvxsa 
+2020-08-04 19:31:23,523 ERROR Authorization failed or requested resource not found. 
+2020-08-04 19:31:25,138 INFO Successfully updated ocid1.dbsystem.oc1.iad.abuwcljrlm2xuyudagdmyofwlbrro6gulxa2ysivgrgnsytbuf67yhwq5vba 

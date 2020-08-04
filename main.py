@@ -36,5 +36,6 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
     resource_type = args.resource
+    update.logger.info("Updating resource " + resource_type)
     handle_csv(update.update_tag, resource_type)
 
